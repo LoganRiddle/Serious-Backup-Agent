@@ -28,7 +28,7 @@ int backup_job(string destination, string directory){
 
     const char* command = pre_command.c_str();
 
-    cout << command;
+    //cout << command;
 
     system(command);
 
