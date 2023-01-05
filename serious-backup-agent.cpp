@@ -4,9 +4,10 @@
 using namespace std;
 
 
-int cleanup(){
+int cleanup(string name){
     //  Deletes temp
-    const char* clean_command = "rm -rf .backup_job";
+    string pre_clean_command = "rm -rf " + name;
+    const char* clean_command = pre_clean_command.c_str();
     system(clean_command);
 
     return 0;
@@ -17,7 +18,7 @@ int compress_backup(string destination, string directory, string name){
     string pre_comp_command;
 
     // Compresses temporary backup folder
-    pre_comp_command = "tar --create --file " + name + ".tar.gz .backup_job";
+    pre_comp_command = "tar --create --file " + name + ".tar.gz " + name;
     const char* comp_command = pre_comp_command.c_str();
     system(comp_command);
 
@@ -28,23 +29,22 @@ int compress_backup(string destination, string directory, string name){
 int backup_job(string destination, string directory, string name){
     string pre_copy_command; 
     string pre_move_command;
-    
-    // Makes temp hidden folder to house backup
-    const char* make_command = "mkdir .backup_job";
-    system(make_command);
 
     // Copies chosen directory to temp backup folder
-    pre_copy_command = "cp -r " + directory + " .backup_job"; 
+    pre_copy_command = "cp -r " + directory + " " + name; 
     const char* copy_command = pre_copy_command.c_str();
     system(copy_command);
 
+    // Compresses directory using tar
     compress_backup(destination, directory, name);
 
+    // Moves compressed file to specified destination
     pre_move_command = "mv " + name + ".tar.gz " + destination;
     const char* move_command =  pre_move_command.c_str();
     system(move_command);
 
-    cleanup();
+    // Deletes temp folder
+    cleanup(name);
 
     return 0;
 }
