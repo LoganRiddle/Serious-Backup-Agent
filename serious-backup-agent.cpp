@@ -4,32 +4,47 @@
 using namespace std;
 
 
-int compress_backup(string destination, string directory){
-    string pre_command;
-    string name = "Vince";
-
-    pre_command = "tar --create --file " + name + "-Backup.tar.gz " + directory;
-    
-    const char* command = pre_command.c_str();
-
-    system(command);
+int cleanup(){
+    //  Deletes temp
+    const char* clean_command = "rm -rf .backup_job";
+    system(clean_command);
 
     return 0;
 }
 
 
-int backup_job(string destination, string directory){
-    string pre_command; 
+int compress_backup(string destination, string directory, string name){
+    string pre_comp_command;
 
-    pre_command = "cp -r " + directory + " " + destination; 
+    // Compresses temporary backup folder
+    pre_comp_command = "tar --create --file " + name + ".tar.gz .backup_job";
+    const char* comp_command = pre_comp_command.c_str();
+    system(comp_command);
 
-    const char* command = pre_command.c_str();
+    return 0;
+}
 
-    //cout << command;
 
-    system(command);
+int backup_job(string destination, string directory, string name){
+    string pre_copy_command; 
+    string pre_move_command;
+    
+    // Makes temp hidden folder to house backup
+    const char* make_command = "mkdir .backup_job";
+    system(make_command);
 
-    // compress_backup(destination, directory);
+    // Copies chosen directory to temp backup folder
+    pre_copy_command = "cp -r " + directory + " .backup_job"; 
+    const char* copy_command = pre_copy_command.c_str();
+    system(copy_command);
+
+    compress_backup(destination, directory, name);
+
+    pre_move_command = "mv " + name + ".tar.gz " + destination;
+    const char* move_command =  pre_move_command.c_str();
+    system(move_command);
+
+    cleanup();
 
     return 0;
 }
@@ -38,6 +53,7 @@ int backup_job(string destination, string directory){
 int config_backup(void){
     string destination;
     string directory;
+    string name;
     string consent;
     
     cout << "List a destination filepath for the backup to be stored: (ex. ~/Documents/):\n";
@@ -46,11 +62,14 @@ int config_backup(void){
     cout << "Enter the filepath to the upper-most directory you would like to include in the backup process (ex. ~/Documents/):\n";
     cin >> directory;
 
-    cout << "The backup will be of '" << directory << "' and be saved at '" << destination << "', do you wish to proceed? (y/n):";
+    cout << "Enter what you would like to name the backup:\n";
+    cin >> name;
+
+    cout << "The backup will be of '" << directory << "' named '" << name << "' and be saved at '" << destination << "', do you wish to proceed? (y/n):";
     cin >> consent;
 
     if(consent == "y"){
-        backup_job(destination, directory);
+        backup_job(destination, directory, name);
         return 0;
     }else{
         exit(EXIT_SUCCESS);
