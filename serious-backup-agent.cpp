@@ -5,10 +5,19 @@ using namespace std;
 
 
 int cleanup(string name){
+    int ret_code;
+
     //  Deletes temp
     string pre_clean_command = "rm -rf " + name;
     const char* clean_command = pre_clean_command.c_str();
-    system(clean_command);
+    ret_code = system(clean_command);
+
+    if(ret_code != 0){
+      cout << "Error: Failed to cleanup copy command, return code" << ret_code << "\n";
+      exit(EXIT_FAILURE);
+    }
+
+    ret_code = 0;
 
     return 0;
 }
@@ -16,32 +25,62 @@ int cleanup(string name){
 
 int compress_backup(string destination, string directory, string name){
     string pre_comp_command;
+    int ret_code;
 
     // Compresses temporary backup folder
     pre_comp_command = "tar --create --file " + name + ".tar.gz " + name;
     const char* comp_command = pre_comp_command.c_str();
-    system(comp_command);
+    ret_code = system(comp_command);
+
+    if(ret_code != 0){
+      cout << "Error: Failed to execute compress command, return code" << ret_code << "\n";
+      exit(EXIT_FAILURE);
+    }
+
+    ret_code = 0;
 
     return 0;
 }
 
 
 int backup_job(string destination, string directory, string name){
-    string pre_copy_command; 
+    string pre_copy_command;
     string pre_move_command;
+    int ret_code;
 
     // Copies chosen directory to temp backup folder
-    pre_copy_command = "cp -r " + directory + " " + name; 
+    pre_copy_command = "cp -r " + directory + " " + name;
     const char* copy_command = pre_copy_command.c_str();
-    system(copy_command);
+    ret_code = system(copy_command);
+
+    if(ret_code != 0){
+      cout << "Error: Failed to execute copy command, return code" << ret_code << "\n";
+      exit(EXIT_FAILURE);
+    }
+
+    ret_code = 0;
 
     // Compresses directory using tar
-    compress_backup(destination, directory, name);
+    ret_code = compress_backup(destination, directory, name);
+
+    if(ret_code != 0){
+      cout << "Error: Failed to execute compress command, return code" << ret_code << "\n";
+      exit(EXIT_FAILURE);
+    }
+
+    ret_code = 0;
 
     // Moves compressed file to specified destination
     pre_move_command = "mv " + name + ".tar.gz " + destination;
     const char* move_command =  pre_move_command.c_str();
-    system(move_command);
+    ret_code = system(move_command);
+
+    if(ret_code != 0){
+      cout << "Error: Failed to execute move command, return code" << ret_code << "\n";
+      exit(EXIT_FAILURE);
+    }
+
+    ret_code = 0;
 
     // Deletes temp folder
     cleanup(name);
@@ -55,7 +94,7 @@ int config_backup(void){
     string directory;
     string name;
     string consent;
-    
+
     cout << "List a destination filepath for the backup to be stored: (ex. ~/Documents/):\n";
     cin >> destination;
 
