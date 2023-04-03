@@ -1,7 +1,5 @@
 # Serious-Backup-Agent
 
-![alt text](https://github.com/LoganRiddle/Inferno-Stress-Test/blob/main/src/images/Inferno.png "App Image")
-
 ## Description
 A simple non-graphical file-level backup agent application for creating compressed backups. 
 
