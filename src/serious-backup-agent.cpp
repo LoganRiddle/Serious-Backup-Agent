@@ -5,12 +5,12 @@ using namespace std;
 
 
 int cleanup(string name){
-    int ret_code;
+    int ret_code = 0; 
 
     //  Deletes temp
     string pre_clean_command = "rm -rf " + name;
     const char* clean_command = pre_clean_command.c_str();
-    ret_code = system(clean_command);
+    system(clean_command);
 
     if(ret_code != 0){
       cout << "Error: Failed to cleanup copy command, return code" << ret_code << "\n";
@@ -96,7 +96,7 @@ int config_backup(void){
     string consent;
 
     cout << "List a destination filepath for the backup to be stored: (ex. ~/Documents/):\n";
-    cin >> destination;
+    cin >> destination; 
 
     cout << "Enter the filepath to the upper-most directory you would like to include in the backup process (ex. ~/Documents/):\n";
     cin >> directory;
@@ -123,6 +123,7 @@ int main(void){
     system("clear");
 
     string config_now;
+    int ret_code = 0;
 
     cout << "Welcome to Serious Backup Agent\n";
     cout << "Configure Backup Now(y/n): ";
@@ -142,8 +143,10 @@ int main(void){
         exit(EXIT_SUCCESS);
     }else{
         cout << "Error: incorrect input detected\n";
+	ret_code = 1;
         exit(EXIT_FAILURE);
     }
 
-    return 0;
+    system("clear");
+    return ret_code;
 }
